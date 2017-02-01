@@ -6,7 +6,7 @@ const path = require('path');
 const async = require('async');
 const glob = require('glob');
 const AWS = require('aws-sdk');
-const jszip = require('jszip');
+const JSZip = require('jszip');
 const md5file = require('md5-file');
 
 
@@ -27,9 +27,9 @@ const packageAndUpload = function workFunction(argv) {
     // Make sure we have everything
     (done) => {
       console.log(''); // Add empty row to make results cleaner
-      if(!argv.source) { return done(new Error('--source is a required parameter')); }
-      if(!argv.targetBucket) { return done(new Error('--target-bucket is a required parameter')); }
-      if(!argv.targetKey) { return done(new Error('--target-key is a required parameter')); }
+      if (!argv.source) { return done(new Error('--source is a required parameter')); }
+      if (!argv.targetBucket) { return done(new Error('--target-bucket is a required parameter')); }
+      if (!argv.targetKey) { return done(new Error('--target-key is a required parameter')); }
       done(null, {}); // Add data object to waterfall
     },
 
@@ -38,7 +38,7 @@ const packageAndUpload = function workFunction(argv) {
       glob(argv.source, (err, files) => {
         
         // Do sanity check so that we dont accidentally gather everything
-        if(files.length > 50) {
+        if (files.length > 50) {
           return done(new Error(`Too many source files (${files.length}), probably errennous source pattern.`));
         }
         data.files = files;
@@ -48,13 +48,16 @@ const packageAndUpload = function workFunction(argv) {
 
     // Create release package
     (data, done) =>  {
-      const package = new jszip();
+      const package = new JSZip();
       console.log('Creating release package...');
       data.files.forEach((filename) => {
         console.log(`  adding "${filename}"`);
 
         // Set file dates to something else to keep date affecting MD5 hashes
-        package.file(path.basename(filename), fs.readFileSync(filename, 'binary'), {binary: true, date: new Date('1970-01-01')});
+        package.file(path.basename(filename), fs.readFileSync(filename, 'binary'), {
+          binary: true,
+          date: new Date('1970-01-01')
+        });
       });
 
       // Create the zip file
@@ -85,7 +88,7 @@ const packageAndUpload = function workFunction(argv) {
         Key: argv.targetKey
       };
       s3.getObject(params, (err, response) => {
-        if(err && err.statusCode === 404) { err = null; } // We dont care about 404 errors
+        if (err && err.statusCode === 404) { err = null; } // We dont care about 404 errors
         data.remoteHash = response && response.ETag.replace(/"/g, ''); // Remove extra quotes ('"asdasdasd"')
         done(err, data);
       });
@@ -93,8 +96,8 @@ const packageAndUpload = function workFunction(argv) {
 
     // Upload to S3
     (data, done) => {
-      if(data.localHash === data.remoteHash) {
-        console.log('Matching package already exists.')
+      if (data.localHash === data.remoteHash) {
+        console.log('Matching package already exists.');
         return done(null, data);
       }
 
@@ -105,13 +108,13 @@ const packageAndUpload = function workFunction(argv) {
         Body: fs.readFileSync(data.localFilename)
       };
       s3.upload(params, (err, response) => {
-        if(err) { return done(err); }
+        if (err) { return done(err); }
         console.log(`New package uploaded. (${data.localFilename} -> ${response.Location})`);
         done(null, data);
       });
     }
-  ], (err, data) => {
-    if(err) { console.log('ERROR:', err.message); }
+  ], (err) => {
+    if (err) { console.log('ERROR:', err.message); }
 
     console.log(''); // Add empty row to make results cleaner 
   });
