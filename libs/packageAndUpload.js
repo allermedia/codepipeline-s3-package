@@ -12,11 +12,11 @@ const md5file = require('md5-file');
 
 const packageAndUpload = function workFunction(argv) {
 
-  // Configure AWS client (before message handler is loaded)
+  // Configure AWS client
   AWS.config = {
     region: 'eu-west-1',
-    //accessKeyId: '',
-    //secretAccessKey: '',
+    //accessKeyId: '', // Required for programmatic use
+    //secretAccessKey: '', // Required for programmatic use
     apiVersion: '2017-01-01'
   };
   var s3 = new AWS.S3();
