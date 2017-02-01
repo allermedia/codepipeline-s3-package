@@ -4,6 +4,20 @@
   "description": "Provides ability to do AWS S3 source updates for AWS Codepipeline",
   "author": "",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/allermedia/codepipelines-s3-package.git"
+  },
+  "keywords": [
+    "aws",
+    "codepipeline",
+    "s3",
+    "release"
+  ],
+  "bugs": {
+    "url": "https://github.com/allermedia/codepipelines-s3-package/issues"
+  },
+  "homepage": "https://github.com/allermedia/codepipelines-s3-package#readme",
   "main": "index.js",
   "bin": {
     "codepipeline-s3-package": "./bin/codepipeline-s3-package.js"
