@@ -7,16 +7,41 @@ const async = require('async');
 const glob = require('glob');
 const AWS = require('aws-sdk');
 const JSZip = require('jszip');
-const md5file = require('md5-file');
+const md5 = require('md5');
 
 
-const packageAndUpload = function workFunction(argv) {
+/*
+Example data:
+
+let data = {
+  source: {
+    files: [],
+    package: {
+      buffer: '',
+      md5: ''
+    }
+  },
+  target: {
+    package: {
+      location: '',
+      md5: ''
+    }
+  },
+  status: {
+    uploaded: false,
+    message: 'matching checksum'
+  }
+};
+*/
+const packageAndUpload = function workFunction(argv, callback) {
+  // Make things backwards compatible
+  argv.sourceFiles = argv.sourceFiles || argv.source; // source became sourceFiles
 
   // Configure AWS client
   AWS.config = {
     region: 'eu-west-1',
-    //accessKeyId: '', // Required for programmatic use
-    //secretAccessKey: '', // Required for programmatic use
+    accessKeyId: argv.awsKey, // Either defined here, in env variables or by aws cli
+    secretAccessKey: argv.awsSecret, // Either defined here, in env variables or by aws cli
     apiVersion: '2017-01-01'
   };
   var s3 = new AWS.S3();
@@ -24,24 +49,35 @@ const packageAndUpload = function workFunction(argv) {
 
   async.waterfall([
 
-    // Make sure we have everything
+    // Make sure we have everything + set data object
     (done) => {
-      console.log(''); // Add empty row to make results cleaner
-      if (!argv.source) { return done(new Error('--source is a required parameter')); }
-      if (!argv.targetBucket) { return done(new Error('--target-bucket is a required parameter')); }
+      if (!argv.sourceFiles) { return done(new Error('--source-files is a required parameter')); }
+      if (!argv.targetBucket) {
+        return done(new Error('--target-bucket is a required parameter'));
+      }
       if (!argv.targetKey) { return done(new Error('--target-key is a required parameter')); }
-      done(null, {}); // Add data object to waterfall
+      done(null, {
+        source: {},
+        target: {},
+        status: {}
+      }); 
     },
 
     // Get source files
     (data, done) => {
-      glob(argv.source, (err, files) => {
+      glob(argv.sourceFiles, {nodir: true}, (err, files) => {
+        if (err) { return done(err); }
         
-        // Do sanity check so that we dont accidentally gather everything
-        if (files.length > 50) {
-          return done(new Error(`Too many source files (${files.length}), probably errennous source pattern.`));
+        // Do sanity checks
+        if (files.length === 0) {
+          return done(new Error(`No source files found. ("argv.sourceFiles")`));
         }
-        data.files = files;
+        if (files.length > 50) {
+          return done(
+            new Error(`Too many source files ("${files.length}"), probably errennous source pattern.`)
+          );
+        }
+        data.source.files = files;
         done(err, data);
       });
     },
@@ -49,39 +85,31 @@ const packageAndUpload = function workFunction(argv) {
     // Create release package
     (data, done) =>  {
       const package = new JSZip();
-      console.log('Creating release package...');
-      data.files.forEach((filename) => {
-        console.log(`  adding "${filename}"`);
+      data.source.files.forEach((filename) => {
 
-        // Set file dates to something else to keep date affecting MD5 hashes
+        // Force file dates to keep modified headers from affecting package MD5 hashes
         package.file(path.basename(filename), fs.readFileSync(filename, 'binary'), {
           binary: true,
           date: new Date('1970-01-01')
         });
       });
 
-      // Create the zip file
+      // Add package data
       var packageData = [];
       package.generateNodeStream({compression: 'DEFLATE', streamFiles: true})
         .on('data', (data) => { packageData.push(data); })
         .on('error', (err) => { return done(err); })
         .on('end', () => {
           var content = Buffer.concat(packageData);
-          data.localFilename = './source.zip';
-          fs.writeFileSync(data.localFilename, content);
+          data.source.package = {
+            md5: md5(content),
+            buffer: content
+          };
           done(null, data);
         });
     },
 
-    // Get local file hash
-    (data, done) =>  {
-      md5file(data.localFilename, (err, hash) => {
-        data.localHash = hash;
-        done(err, data);
-      });
-    },
-
-    // Get remote file hash
+    // Get remote file checksum
     (data, done) => {
       let params = {
         Bucket: argv.targetBucket,
@@ -89,35 +117,35 @@ const packageAndUpload = function workFunction(argv) {
       };
       s3.getObject(params, (err, response) => {
         if (err && err.statusCode === 404) { err = null; } // We dont care about 404 errors
-        data.remoteHash = response && response.ETag.replace(/"/g, ''); // Remove extra quotes ('"asdasdasd"')
+        data.target.package = {
+          md5: response && response.ETag.replace(/"/g, '') // Remove extra quotes ('"abc123"')
+        };
         done(err, data);
       });
     },
 
     // Upload to S3
     (data, done) => {
-      if (data.localHash === data.remoteHash) {
-        console.log('Matching package already exists.');
+      if (data.source.package.md5 === data.target.package.md5) {
+        data.status.uploaded = false;
+        data.status.message = 'Matching package already exist.';
         return done(null, data);
       }
 
-      // File differs from remote, upload new
+      // Source package differs from target package, upload it
       let params = {
         Bucket: argv.targetBucket,
         Key: argv.targetKey,
-        Body: fs.readFileSync(data.localFilename)
+        Body: data.source.package.buffer
       };
       s3.upload(params, (err, response) => {
         if (err) { return done(err); }
-        console.log(`New package uploaded. (${data.localFilename} -> ${response.Location})`);
+        data.target.package.location = response.Location;
+        data.status.uploaded = true;
         done(null, data);
       });
     }
-  ], (err) => {
-    if (err) { console.log('ERROR:', err.message); }
-
-    console.log(''); // Add empty row to make results cleaner 
-  });
+  ], callback);
 };
 
 

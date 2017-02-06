@@ -15,4 +15,21 @@ program
   .option('-K, --target-key <S3 file key>', 'target S3 file key')
   .parse(process.argv);
 
-packageAndUpload(program);
+
+console.log('');
+console.log('Creating release package...');
+
+packageAndUpload(program, (err, data) => {
+  if (err) { return console.log('ERROR: ', err.message); }
+
+  // If we didn't upload, let them know why
+  if (!data.status.uploaded) {
+    return console.log(data.status.message);
+  }
+
+  // Show the contents and location of the package
+  data.source.files.forEach((filename) => {
+    console.log(`  added "${filename}"`);
+  });
+  console.log(`New package uploaded. (${data.target.package.location})`);
+});
