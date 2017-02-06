@@ -21,6 +21,6 @@ currently targeted for Docker deployments.
 
 ```json
 {
-  "scripts": "codepipelines-s3-package --source=cloudformation/* --target-bucket=my-cloudformation-bucket --target-key=my-pipelines-source.zip"
+  "scripts": "codepipeline-s3-package --source=cloudformation/* --target-bucket=my-cloudformation-bucket --target-key=my-pipelines-source.zip"
 }
 ```
