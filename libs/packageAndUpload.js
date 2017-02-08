@@ -51,11 +51,15 @@ const packageAndUpload = function workFunction(argv, callback) {
 
     // Make sure we have everything + set data object
     (done) => {
-      if (!argv.sourceFiles) { return done(new Error('--source-files is a required parameter')); }
+      if (!argv.sourceFiles) {
+        return done(new Error('--source-files is a required parameter'));
+      }
       if (!argv.targetBucket) {
         return done(new Error('--target-bucket is a required parameter'));
       }
-      if (!argv.targetKey) { return done(new Error('--target-key is a required parameter')); }
+      if (!argv.targetKey) {
+        return done(new Error('--target-key is a required parameter'));
+      }
       done(null, {
         source: {},
         target: {},

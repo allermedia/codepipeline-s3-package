@@ -1,4 +1,4 @@
-#codepipeline-s3-package
+# codepipeline-s3-package
 
 Provides ability to do AWS S3 source updates for AWS Codepipeline
 
