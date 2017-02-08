@@ -1,6 +1,4 @@
 const assert = require('assert');
-const fs = require('fs');
-const async = require('async');
 
 var AWS = require('aws-sdk-mock');
 

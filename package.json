@@ -32,6 +32,8 @@
   },
   "devDependencies": {
     "aws-sdk-mock": "^1.6.1",
+    "jscs": "^3.0.7",
+    "jshint": "^2.9.4",
     "mocha": "^3.2.0",
     "npm-run-all": "^4.0.1"
   },
