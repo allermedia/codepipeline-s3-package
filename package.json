@@ -6,7 +6,7 @@
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/allermedia/codepipelines-s3-package.git"
+    "url": "git+https://github.com/allermedia/codepipeline-s3-package.git"
   },
   "keywords": [
     "aws",
@@ -15,9 +15,9 @@
     "release"
   ],
   "bugs": {
-    "url": "https://github.com/allermedia/codepipelines-s3-package/issues"
+    "url": "https://github.com/allermedia/codepipeline-s3-package/issues"
   },
-  "homepage": "https://github.com/allermedia/codepipelines-s3-package#readme",
+  "homepage": "https://github.com/allermedia/codepipeline-s3-package#readme",
   "main": "index.js",
   "bin": {
     "codepipeline-s3-package": "./bin/codepipeline-s3-package.js"
