@@ -39,8 +39,8 @@
   },
   "scripts": {
     "test": "npm-run-all test:*",
-    "test:quality": "jshint index.js libs/ tests/",
-    "test:style": "jscs index.js libs/ tests/",
-    "test:unit": "mocha tests --recursive --check-leaks"
+    "test:quality": "jshint . --exclude=node_modules/",
+    "test:style": "jscs .",
+    "test:unit": "mocha tests/ --recursive --check-leaks"
   }
 }

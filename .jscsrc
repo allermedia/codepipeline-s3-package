@@ -1,6 +1,4 @@
 {
-  "excludeFiles": [
-  ],
   "disallowMixedSpacesAndTabs": true,
   "validateIndentation": {
     "value": 2,
