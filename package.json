@@ -2,18 +2,18 @@
   "name": "codepipeline-s3-package",
   "version": "1.1.2",
   "description": "Provides ability to do AWS S3 source updates for AWS Codepipeline",
-  "author": "",
-  "license": "ISC",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/allermedia/codepipeline-s3-package.git"
-  },
   "keywords": [
     "aws",
     "codepipeline",
     "s3",
     "release"
   ],
+  "author": "Mikko Tikkanen <mikko.tikkanen@aller.com>",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/allermedia/codepipeline-s3-package.git"
+  },
   "bugs": {
     "url": "https://github.com/allermedia/codepipeline-s3-package/issues"
   },
