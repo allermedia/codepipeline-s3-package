@@ -74,7 +74,7 @@ const packageAndUpload = function workFunction(argv, callback) {
         
         // Do sanity checks
         if (files.length === 0) {
-          return done(new Error(`No source files found. ("argv.sourceFiles")`));
+          return done(new Error(`No source files found. ("${argv.sourceFiles}")`));
         }
         if (files.length > 50) {
           return done(
