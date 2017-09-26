@@ -18,9 +18,9 @@ $ npm install codepipeline-s3-package --save
 
 ## Requirements
 
-Currently the package requires `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` environment
-variables that contain the AWS access and secret keys. This is because the package is
-currently targeted for Docker deployments.
+For accessing the S3 bucket, the package requires eitehr `aws-cli` installed and configured or
+`AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` environment variables containing the AWS access and
+secret keys.
 
 
 ## Usage in package.json
