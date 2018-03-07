@@ -1,9 +1,8 @@
 #!/usr/bin/env node
 /**
  * Commandline accesspoint for the module
- *  
+ *
  */
-
 const program = require('commander');
 const pckg = require('../package.json');
 const packageAndUpload = require('../libs/packageAndUpload');
@@ -20,7 +19,11 @@ console.log('');
 console.log('Creating release package...');
 
 packageAndUpload(program, (err, data) => {
-  if (err) { return console.log('ERROR: ', err.message); }
+  if (err) {
+    console.log('ERROR: ', err.message);
+    process.exit(1);
+    return;
+  }
 
   // If we didn't upload, let them know why
   if (!data.status.uploaded) {
