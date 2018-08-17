@@ -15,9 +15,6 @@ program
   .parse(process.argv);
 
 
-console.log('');
-console.log('Creating release package...');
-
 packageAndUpload(program, (err, data) => {
   if (err) {
     console.log('ERROR: ', err.message);

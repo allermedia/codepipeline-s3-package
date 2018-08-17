@@ -60,6 +60,8 @@ const packageAndUpload = function workFunction(argv, callback) {
     apiVersion: '2017-01-01',
   });
 
+  console.log('');
+  console.log('Creating release package...');
 
   return async.waterfall([
 

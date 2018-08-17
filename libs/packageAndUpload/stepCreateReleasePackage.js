@@ -22,15 +22,15 @@ module.exports = (data, callback) => {
     });
   });
 
-  // Add package data
-  const packageData = [];
+  // Generate package data
+  const packageChunks = [];
   zip.generateNodeStream({ compression: 'DEFLATE', streamFiles: true })
-    .on('data', (chunkData) => { packageData.push(chunkData); })
+    .on('data', (chunkData) => { packageChunks.push(chunkData); })
     .on('error', err => callback(err))
     .on('end', () => {
-      const content = Buffer.concat(packageData);
+      const content = Buffer.concat(packageChunks);
       returnData.source.package = {
-        md5: md5(content),
+        md5: md5(content), // Generate md5 hash for the package
         buffer: content,
       };
       callback(null, returnData);
