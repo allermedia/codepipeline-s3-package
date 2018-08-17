@@ -15,9 +15,10 @@ module.exports = (data, callback) => {
   const returnData = data;
   const zip = new JSZip();
   data.source.files.forEach((filename) => {
-    // Force file dates to keep modified headers from affecting package MD5 hashes
-    zip.file(path.basename(filename), fs.readFileSync(filename, 'binary'), {
+    const zipFilename = (data.argv.flatten ? path.basename(filename) : path.relative('.', filename));
+    zip.file(zipFilename, fs.readFileSync(filename, 'binary'), {
       binary: true,
+      // Force file dates to keep modified headers from affecting package MD5 hashes
       date: new Date('1970-01-01'),
     });
   });

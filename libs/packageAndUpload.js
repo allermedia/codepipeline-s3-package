@@ -50,6 +50,8 @@ const packageAndUpload = function workFunction(argv, callback) {
     return callback(new Error('--target-key is a required parameter'));
   }
 
+  // Parse rest of the stuff
+  argvParsed.sourceFiles = argvParsed.sourceFiles.split(' ');
 
   // Configure AWS client (must be created with `new` to set the global config)
   // Key and secret can either be defined with args, env variables/aws-cli configure
@@ -60,8 +62,10 @@ const packageAndUpload = function workFunction(argv, callback) {
     apiVersion: '2017-01-01',
   });
 
-  console.log('');
-  console.log('Creating release package...');
+  if (process.env.NODE_ENV !== 'testing') {
+    console.log('');
+    console.log('Creating release package...');
+  }
 
   return async.waterfall([
 

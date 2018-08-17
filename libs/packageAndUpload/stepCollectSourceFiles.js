@@ -10,17 +10,26 @@ const glob = require('glob');
  */
 module.exports = (data, callback) => {
   const returnData = data;
-  glob(data.argv.sourceFiles, { nodir: true }, (err, files) => {
-    if (err) { return callback(err); }
+  let sourceFiles = [];
 
-    // Do sanity checks
-    if (files.length === 0) {
-      return callback(new Error(`No source files found. ("${data.argv.sourceFiles}")`));
+  data.argv.sourceFiles.forEach((globFilter) => {
+    let files = [];
+
+    try {
+      files = glob.sync(globFilter, { nodir: true });
+    } catch (err) {
+      return callback(err);
     }
-    if (files.length > 50) {
-      return callback(new Error(`Too many source files ("${files.length}"), probably errennous source pattern.`));
-    }
-    returnData.source.files = files;
-    return callback(err, returnData);
+
+    sourceFiles = sourceFiles.concat(files);
+    return sourceFiles;
   });
+
+  // Do sanity checks
+  if (sourceFiles.length === 0) {
+    return callback(new Error(`No source files found. ("${data.argv.sourceFiles}")`));
+  }
+
+  returnData.source.files = sourceFiles;
+  return callback(null, returnData);
 };
