@@ -27,7 +27,8 @@ packageAndUpload(program, (err, data) => {
 
   // If we didn't upload, let them know why
   if (!data.status.uploaded) {
-    return console.log(data.status.message);
+    console.log(data.status.message);
+    return;
   }
 
   // Show the contents and location of the package

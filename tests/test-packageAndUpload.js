@@ -1,24 +1,22 @@
 const assert = require('assert');
-
-var AWS = require('aws-sdk-mock');
+const AWS = require('aws-sdk-mock');
 
 const lib = require('../libs/packageAndUpload');
 
 
 describe('main library', () => {
-
   before(() => {
     AWS.mock('S3', 'upload', (params, callback) => {
       callback(null, {
         Location: `http://s3.amazonaws.com/${params.Bucket}/${params.Key}`,
-        Key: params.Key
+        Key: params.Key,
       });
     });
   });
 
 
   it('should throw error when called without "sourceFiles" option', (done) => {
-    let opts = {};
+    const opts = {};
     lib(opts, (err) => {
       assert(err);
       done();
@@ -26,8 +24,8 @@ describe('main library', () => {
   });
 
   it('should throw error when called without "targetBucket" option', (done) => {
-    let opts = {
-      sourceFiles: 'non-existent-directory/'
+    const opts = {
+      sourceFiles: 'non-existent-directory/',
     };
     lib(opts, (err) => {
       assert(err);
@@ -36,9 +34,9 @@ describe('main library', () => {
   });
 
   it('should throw error when called without "targetKey" option', (done) => {
-    let opts = {
+    const opts = {
       sourceFiles: 'non-existent-directory/',
-      targetBucket: 'somethingsomething'
+      targetBucket: 'somethingsomething',
     };
     lib(opts, (err) => {
       assert(err);
@@ -59,10 +57,10 @@ describe('main library', () => {
         callback(null, null);
       });
 
-      let opts = {
-        sourceFiles: __dirname+'/files/static/**/*',
+      const opts = {
+        sourceFiles: `${__dirname}/files/static/**/*`,
         targetBucket: 'non-existing-bucket',
-        targetKey: 'dummy-package.zip'
+        targetKey: 'dummy-package.zip',
       };
       lib(opts, (err, data) => {
         assert(data);
@@ -76,14 +74,14 @@ describe('main library', () => {
     it('should upload new package when existing package has different checksum', (done) => {
       AWS.mock('S3', 'getObject', (params, callback) => {
         callback(null, {
-          ETag: '"non-matching-md5-hash"' // S3 returns ETags with extra quotes
+          ETag: '"non-matching-md5-hash"', // S3 returns ETags with extra quotes
         });
       });
 
-      let opts = {
-        sourceFiles: __dirname+'/files/static/**/*',
+      const opts = {
+        sourceFiles: `${__dirname}/files/static/**/*`,
         targetBucket: 'non-existing-bucket',
-        targetKey: 'dummy-package.zip'
+        targetKey: 'dummy-package.zip',
       };
       lib(opts, (err, data) => {
         assert(data);
@@ -98,14 +96,14 @@ describe('main library', () => {
     it('should not upload the package when existing package has same checksum', (done) => {
       AWS.mock('S3', 'getObject', (params, callback) => {
         callback(null, {
-          ETag: `"${md5checksum}"` // S3 returns ETags with extra quotes
+          ETag: `"${md5checksum}"`, // S3 returns ETags with extra quotes
         });
       });
-      
-      let opts = {
-        sourceFiles: __dirname+'/files/static/**/*',
+
+      const opts = {
+        sourceFiles: `${__dirname}/files/static/**/*`,
         targetBucket: 'non-existing-bucket',
-        targetKey: 'dummy-package.zip'
+        targetKey: 'dummy-package.zip',
       };
       lib(opts, (err, data) => {
         assert(data);
@@ -114,6 +112,4 @@ describe('main library', () => {
       });
     });
   });
-
 });
-
