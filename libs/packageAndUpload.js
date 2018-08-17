@@ -1,10 +1,10 @@
 const async = require('async');
 const AWS = require('aws-sdk');
 
-const stepCollectSourceFiles = require('./packageAndUpload/stepCollectSourceFiles');
-const stepCreateReleasePackage = require('./packageAndUpload/stepCreateReleasePackage');
-const stepS3GetFileChecksum = require('./packageAndUpload/stepS3GetFileChecksum');
-const stepS3Upload = require('./packageAndUpload/stepS3Upload');
+const stepCollectSourceFiles = require('./waterfall-steps/stepCollectSourceFiles');
+const stepCreateReleasePackage = require('./waterfall-steps/stepCreateReleasePackage');
+const stepS3GetFileChecksum = require('./waterfall-steps/stepS3GetFileChecksum');
+const stepS3Upload = require('./waterfall-steps/stepS3Upload');
 
 /*
 Example waterfall data object:
