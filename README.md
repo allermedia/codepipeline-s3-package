@@ -51,7 +51,6 @@ Usage with multiple source file locations:
 ```
 
 
-
 ### Arguments
 
 `--source-files` - glob pattern(s) for source files
