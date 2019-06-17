@@ -1,6 +1,6 @@
 {
   "name": "codepipeline-s3-package",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Provides ability to do AWS S3 source updates for AWS Codepipeline",
   "keywords": [
     "aws",
