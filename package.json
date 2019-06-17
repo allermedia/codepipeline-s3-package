@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "async": "^3.0.1",
+    "audit-ci": "^2.0.1",
     "aws-sdk": "^2.475.0",
     "commander": "^2.20.0",
     "glob": "^7.1.4",
@@ -43,6 +44,7 @@
     "preversion": "npm test",
     "test": "npm-run-all test:*",
     "test:code": "eslint .",
-    "test:unit": "cross-env NODE_ENV=testing mocha tests/ --recursive --check-leaks"
+    "test:unit": "cross-env NODE_ENV=testing mocha tests/ --recursive --check-leaks",
+    "test:audit": "audit-ci --high"
   }
 }
