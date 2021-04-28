@@ -25,7 +25,7 @@
   "dependencies": {
     "async": "^3.0.1",
     "audit-ci": "^2.0.1",
-    "aws-sdk": "^2.475.0",
+    "aws-sdk": "2.475.0",
     "commander": "^2.20.0",
     "glob": "^7.1.4",
     "jszip": "^3.2.1",
