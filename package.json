@@ -45,6 +45,6 @@
     "test": "npm-run-all test:*",
     "test:code": "eslint .",
     "test:unit": "cross-env NODE_ENV=testing mocha tests/ --recursive --check-leaks",
-    "test_:audit": "audit-ci --high"
+    "test:audit": "audit-ci --high"
   }
 }
